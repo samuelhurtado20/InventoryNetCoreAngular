@@ -1,11 +1,7 @@
 ﻿using Dapper.Contrib.Extensions;
 using Inventory.Repositories;
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Inventory.DataAccess
 {
@@ -31,7 +27,7 @@ namespace Inventory.DataAccess
             return connection.GetAll<T>();
         }
 
-        public T GetNyId(int id)
+        public T GetById(int id)
         {
             using var connection = new SqlConnection(_connectionString);
             return connection.Get<T>(id);

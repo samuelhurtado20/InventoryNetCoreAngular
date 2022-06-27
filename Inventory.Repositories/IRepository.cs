@@ -8,6 +8,6 @@ namespace Inventory.Repositories
         bool Update(T entity);
         int Insert(T entity);
         IEnumerable<T> GetAll();
-        T GetNyId(int id);
+        T GetById(int id);
     }
 }

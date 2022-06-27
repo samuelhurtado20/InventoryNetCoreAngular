@@ -1,16 +1,14 @@
+using Inventory.UnitOfWork;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Inventory.DataAccess;
+using Inventory.WebApi.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Inventory.WebApi
 {
@@ -26,6 +24,26 @@ namespace Inventory.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<IUnitOfWork>(option => new InventoryUnitOfWork(
+                Configuration.GetConnectionString("Inventory")
+                ));
+
+            // jwt
+            var tokenProvider = new JwtProvider("issuer", "audience", "inventory_2022");
+            services.AddSingleton<ITokenProvider>(tokenProvider);
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = tokenProvider.GetValidationParameters();
+                });
+            services.AddAuthorization(auth =>
+            {
+                auth.DefaultPolicy = new AuthorizationPolicyBuilder()
+                .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                .RequireAuthenticatedUser()
+                .Build();
+            });
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -48,6 +66,7 @@ namespace Inventory.WebApi
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -57,3 +76,8 @@ namespace Inventory.WebApi
         }
     }
 }
+
+//go to folder
+//dotnet compile
+//dotnet build
+//dotne run
