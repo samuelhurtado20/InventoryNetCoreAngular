@@ -1,5 +1,5 @@
-﻿using Inventory.Models;
-using Inventory.UnitOfWork;
+﻿using Inventory.Business.Interfaces;
+using Inventory.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -13,12 +13,12 @@ namespace Inventory.WebApi.Controllers
     [Authorize]
     public class SupplierController : Controller
     {
-        private readonly IUnitOfWork _uow;
+        private readonly ISupplierBusiness _supplierBUS;
         private readonly ILogger<SupplierController> _logger;
 
-        public SupplierController(ILogger<SupplierController> logger, IUnitOfWork uow)
+        public SupplierController(ILogger<SupplierController> logger, ISupplierBusiness supplierBUS)
         {
-            _uow = uow;
+            _supplierBUS = supplierBUS;
             _logger = logger;
         }
 
@@ -26,34 +26,34 @@ namespace Inventory.WebApi.Controllers
         public IActionResult Post([FromBody] Supplier supplier)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
-            return Ok(_uow.Supplier.Insert(supplier));
+            return Ok(_supplierBUS.Insert(supplier));
         }
 
         [HttpGet]
         [Route("{id:int}")]
         public IActionResult Get(int id)
         {
-            return Ok(_uow.Supplier.GetById(id));
+            return Ok(_supplierBUS.GetById(id));
         }
 
         [HttpGet]
         [Route("{page:int}/{rows:int}")]
         public IActionResult GetPagedList(int page, int rows)
         {
-            return Ok(_uow.Supplier.GetSupplierPagedList(page, rows));
+            return Ok(_supplierBUS.PagedList(page, rows));
         }
 
         [HttpPut]
         public IActionResult Put([FromBody] Supplier supplier)
         {
-            if (ModelState.IsValid && _uow.Supplier.Update(supplier)) return Ok(new { Message = "The supplier is updated." });
+            if (ModelState.IsValid && _supplierBUS.Update(supplier)) return Ok(new { Message = "The supplier is updated." });
             return BadRequest(ModelState);
         }
 
         [HttpDelete]
         public IActionResult Delete([FromBody] Supplier supplier)
         {
-            if (supplier.Id > 0) return Ok(_uow.Supplier.Delete(supplier));
+            if (supplier.Id > 0) return Ok(_supplierBUS.Delete(supplier));
             return BadRequest();
         }
     }

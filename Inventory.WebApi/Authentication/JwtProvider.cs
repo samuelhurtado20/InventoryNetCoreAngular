@@ -10,17 +10,18 @@ namespace Inventory.WebApi.Authentication
 {
     public class JwtProvider: ITokenProvider
     {
-        private RsaSecurityKey _key;
-        private string _algoritm;
-        private string _issuer;
-        private string _audience;
+        private readonly RsaSecurityKey _key;
+        private readonly string _algoritm;
+        private readonly string _issuer;
+        private readonly string _audience;
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Interoperability", "CA1416:Validate platform compatibility", Justification = "<Pending>")]
         public JwtProvider(string issuer, string audience, string keyName)
         {
             CspParameters parameters = new()
             {
                 KeyContainerName = keyName,
-                Flags = CspProviderFlags.UseMachineKeyStore
+                //Flags = CspProviderFlags.UseMachineKeyStore
             };
             RSACryptoServiceProvider provider = new(2048, parameters);
             _key = new RsaSecurityKey(provider);

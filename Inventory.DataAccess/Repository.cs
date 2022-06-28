@@ -33,10 +33,11 @@ namespace Inventory.DataAccess
             return connection.Get<T>(id);
         }
 
-        public int Insert(T entity)
+        public T Insert(T entity)
         {
             using var connection = new SqlConnection(_connectionString);
-            return (int)connection.Insert<T>(entity);
+            connection.Insert<T>(entity);
+            return entity;
         }
 
         public bool Update(T entity)

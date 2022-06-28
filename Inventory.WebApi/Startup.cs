@@ -9,6 +9,8 @@ using Inventory.DataAccess;
 using Inventory.WebApi.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Inventory.Business.Interfaces;
+using Inventory.Business.Implementations;
 
 namespace Inventory.WebApi
 {
@@ -24,6 +26,11 @@ namespace Inventory.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton<ISupplierBusiness, SupplierBusiness>();
+            services.AddSingleton<ICustomerBusiness, CustomerBusiness>();
+            services.AddSingleton<IOrderBusiness, OrderBusiness>();
+            services.AddSingleton<ITokenBusiness, TokenBusiness>();
+
             services.AddSingleton<IUnitOfWork>(option => new InventoryUnitOfWork(
                 Configuration.GetConnectionString("Inventory")
                 ));

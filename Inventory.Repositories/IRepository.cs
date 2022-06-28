@@ -6,7 +6,7 @@ namespace Inventory.Repositories
     {
         bool Delete(T entity);
         bool Update(T entity);
-        int Insert(T entity);
+        T Insert(T entity);
         IEnumerable<T> GetAll();
         T GetById(int id);
     }

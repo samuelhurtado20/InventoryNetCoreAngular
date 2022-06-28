@@ -1,5 +1,5 @@
-﻿using Inventory.Models;
-using Inventory.UnitOfWork;
+﻿using Inventory.Business.Interfaces;
+using Inventory.Models;
 using Inventory.WebApi.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,18 +10,18 @@ namespace Inventory.WebApi.Controllers
     public class AuthController
     {
         private ITokenProvider _tokenProvider;
-        private IUnitOfWork _unitOfWork;
+        private ITokenBusiness _tokenBUS;
 
-        public AuthController(ITokenProvider tokenProvider, IUnitOfWork unitOfWork)
+        public AuthController(ITokenProvider tokenProvider, ITokenBusiness tokenBUS)
         {
             _tokenProvider = tokenProvider;
-            _unitOfWork = unitOfWork;
+            _tokenBUS = tokenBUS;
         }
 
         [HttpPost]
         public JsonWebToken Post([FromBody] User userLogin)
         {
-            var user = _unitOfWork.User.ValidateUser(userLogin.Email, userLogin.Password);
+            var user = _tokenBUS.ValidateUser(userLogin.Email, userLogin.Password);
             if (user == null)
             {
                 throw new UnauthorizedAccessException();
